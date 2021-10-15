@@ -1,9 +1,6 @@
 package com.example.mvvm_github_user_search.ui.viewmodel
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.mvvm_github_user_search.data.model.User
 import com.example.mvvm_github_user_search.data.repos.GithubRepository
 import kotlinx.coroutines.*
@@ -11,9 +8,13 @@ import kotlinx.coroutines.*
 class GithubViewModel : ViewModel() {
 
     val users = MutableLiveData<List<User>>()
-    fun fetchUsers() {
+    val searchUsers = MutableLiveData<List<User>>()
 
-        viewModelScope.launch {
+    init{
+        fetchUsers()
+    }
+
+    private fun fetchUsers() = viewModelScope.launch {
             val response = withContext(Dispatchers.IO) {
                 GithubRepository.getUsers()
             }
@@ -23,16 +24,15 @@ class GithubViewModel : ViewModel() {
                 }
             }
         }
-    }
 
 
-    fun searchUsers(name:String) = liveData(Dispatchers.IO){
 
+    fun searchUsers(name:String) = viewModelScope.launch {
             val response = withContext(Dispatchers.IO){
                 GithubRepository.searchUser(name)}
             if (response.isSuccessful){
                 response.body()?.let {
-                    emit(it.items)      //emit gives the value of the live data
+                    searchUsers.postValue(it.items)      //emit gives the value of the live data
                 }
             }
     }

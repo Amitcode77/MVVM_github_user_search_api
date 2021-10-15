@@ -9,7 +9,7 @@ import com.example.mvvm_github_user_search.data.model.User
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_user.view.*
 
-class UserAdapter(var data: List<User>) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
+class UserAdapter(val data: List<User>) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
 
     inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

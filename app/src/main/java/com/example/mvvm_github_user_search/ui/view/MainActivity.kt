@@ -22,65 +22,55 @@ class MainActivity : AppCompatActivity() {
 
     var list = mutableListOf<User>()
     var originalList = mutableListOf<User>()
-    val adapter = UserAdapter(list)
+    private lateinit var adapter: UserAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        rv_user.apply {
-//            layoutManager = LinearLayoutManager(this@MainActivity)
-//            adapter = myAdapter
-//        }
-        rv_user.adapter = adapter
+        vm.users.observe(this, Observer {
+            rv_user.adapter = UserAdapter(it)
+        })
         rv_user.layoutManager = LinearLayoutManager(this)
 
-        sv_search_users.isSubmitButtonEnabled = true
-        sv_search_users.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let {
-                    findUser(it)
-                }
-                return true
-            }
+//        sv_search_users.isSubmitButtonEnabled = true
+//        sv_search_users.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                query?.let {
+//                    findUser(it)
+//                }
+//                return true
+//            }
+//
+//            override fun onQueryTextChange(newText: String?): Boolean {
+//                newText?.let {
+//                    findUser(it)
+//                }
+//                return true
+//            }
+//
+//        })
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let {
-                    findUser(it)
-                }
-                return true
-            }
-
-        })
-
-        sv_search_users.setOnCloseListener {
-            list.clear()
-            list.addAll(originalList)
-            //another way to do it is below method
-//            vm.users.value?.let { list.addAll(it) }
-            adapter.notifyDataSetChanged()
-            return@setOnCloseListener true
-        }
-
-        vm.users.observe(this, Observer {
-            if(!list.isNullOrEmpty()){
-                list.addAll(it)
-                originalList.addAll(it)
-                adapter.notifyDataSetChanged()
-            }
-        })
+//        sv_search_users.setOnCloseListener {
+//            list.clear()
+//            list.addAll(originalList)
+//            //another way to do it is below method
+////            vm.users.value?.let { list.addAll(it) }
+//            adapter.notifyDataSetChanged()
+//            return@setOnCloseListener true
+//        }
     }
 
-    private fun findUser(query: String) {
-        vm.searchUsers(query).observe(this, Observer {
-            if(!list.isNullOrEmpty()){
-                list.clear()           //to clear the previous result
-                list.addAll(it)
-                adapter.notifyDataSetChanged()
-                Log.d("check","inside find user")
-            }
-        })
-    }
+//    private fun findUser(query: String) {
+//        vm.searchUsers(query).observe(this, Observer {
+//            if(!list.isNullOrEmpty()){
+//                list.clear()
+//                list.addAll(it)
+//                adapter.notifyDataSetChanged()
+//                Log.d("check","inside find user")
+//            }
+//        })
+//    }
 }
 
 
